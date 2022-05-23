@@ -1,0 +1,38 @@
+aws:
+  service-endpoint: http://192.168.146.179:4566
+
+cloud:
+  aws:
+    credentials:
+      access-key: foo
+      secret-key: bar
+    sqs:
+      order-queue:
+        url: http://192.168.146.179:4566/000000000000/order-queue
+        name: order-queue
+      order-queue-2:
+        url: http://192.168.146.179:4566/000000000000/order-queue-2
+        name: order-queue-2
+    sns:
+      order-created:
+        arn: arn:aws:sns:us-east-1:000000000000:order-created-topic
+        name: order-created-topic
+      dlq-default:
+        arn: arn:aws:sns:us-east-1:000000000099:dlq_default
+    stack:
+      # cloud.aws.stack.auto = false → So that app does not try to create a stack and throw 
+      # java.lang.IllegalArgumentException: No valid instance id defined error.
+      auto: false
+    region:
+      # cloud.aws.region.auto: false → To prevent app from trying to auto detect aws region
+      auto: false
+      static: us-east-1
+     
+#debug:
+#  true
+
+test:
+  message:
+    listener:
+      queue: order-event-queue
+      bucket: order-event-bucket

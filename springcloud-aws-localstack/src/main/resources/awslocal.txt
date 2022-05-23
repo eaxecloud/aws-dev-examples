@@ -1,0 +1,31 @@
+#endpoint-url的实际URL，需要根据实际运行localstack的服务器地址而定。如果localstack与application运行在同一服务器上，IP地址可以使用localhost
+aws --endpoint-url=http://192.168.146.179:4566 sqs create-queue  --queue-name  order-queue
+aws --endpoint-url=http://192.168.146.179:4566 sns create-topic  --name  order-created-topic
+aws --endpoint-url=http://192.168.146.179:4566 sqs create-queue  --queue-name  order-queue-2
+aws --endpoint-url=http://192.168.146.179:4566 sns subscribe \
+--topic-arn arn:aws:sns:us-east-1:000000000000:order-created-topic \
+--protocol sqs \
+--notification-endpoint http://192.168.146.179:4566/000000000000/order-queue \
+
+aws --endpoint-url=http://192.168.146.179:4566 sns subscribe \
+--topic-arn arn:aws:sns:us-east-1:000000000000:order-created-topic \
+--protocol sqs \
+--notification-endpoint http://192.168.146.179:4566/000000000000/order-queue-2 \
+
+
+aws --endpoint-url=http://localhost:4566 dynamodb create-table \
+--table-name User \
+--attribute-definitions \
+	AttributeName=id,AttributeType=S \
+	AttributeName=firstName,AttributeType=S \
+--key-schema \
+	AttributeName=id,KeyType=HASH \
+	AttributeName=firstName,KeyType=RANGE \
+--provisioned-throughput \
+	ReadCapacityUnits=5,WriteCapacityUnits=5 \
+--table-class STANDARD \
+
+#查看数据的脚本
+aws --endpoint-url=http://192.168.146.179:4566 sqs list-queues
+aws --endpoint-url=http://192.168.146.179:4566 sns list-subscriptions
+aws --endpoint-url=http://192.168.146.179:4566 dynamodb list-tables
